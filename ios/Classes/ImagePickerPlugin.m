@@ -248,13 +248,16 @@ static const int SOURCE_GALLERY = 1;
 
       if ([[NSFileManager defaultManager] isReadableFileAtPath:[videoURL path]]) {
         NSError *error;
-        [[NSFileManager defaultManager] copyItemAtURL:videoURL toURL:destination error:&error];
-        if (error) {
-          self.result([FlutterError errorWithCode:@"flutter_image_picker_copy_video_error"
-                                          message:@"Could not cache the video file."
-                                          details:nil]);
-          self.result = nil;
-          return;
+        if (![[videoURL path] isEqualToString:[destination path]]) {
+          [[NSFileManager defaultManager] copyItemAtURL:videoURL toURL:destination error:&error];
+
+          if (error) {
+            self.result([FlutterError errorWithCode:@"flutter_image_picker_copy_video_error"
+                                            message:@"Could not cache the video file."
+                                            details:nil]);
+            self.result = nil;
+            return;
+          }
         }
         videoURL = destination;
       }
